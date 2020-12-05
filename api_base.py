@@ -1,12 +1,11 @@
-import requests
 import hashlib
-import util
-import config
+import util, config, api_info, exceptions
 from datetime import timedelta, datetime
-import api_info
-import exceptions
 import time
 from functools import wraps
+import asyncio
+import aiohttp
+from aiolimiter import AsyncLimiter
 
 
 class SessionManager:
@@ -92,24 +91,35 @@ class BaseApi:
             self.dev_id = dev_id
             self.auth_key = auth_key
 
-        self.session = requests.Session()
         self.session_manager = SessionManager(api_info.DAILY_REQUEST_LIMIT, api_info.DAILY_SESSION_LIMIT,
                                               api_info.SESSION_DURATION)
         self.endpoint = "http://api.paladins.com/paladinsapi.svc/"
+        self.refreshing = False
+        self.client_session = None
+        self.rate_limiter = AsyncLimiter(1, 1)
 
-    def create_session(self):
+    async def start_client_session(self):
+        self.client_session = aiohttp.ClientSession()
+
+    async def create_session(self):
+        if not self.refreshing:
+            self.refreshing = True
 
         url = self.__create_url("createsession")
-        success = self.session.get(url, timeout=5).json()
+        print("Going to make a new session")
+        async with aiohttp.request('GET', url, json=True) as resp:
+            success = await resp.json()
+            print(success)
         msg = success['ret_msg']
 
         if msg == 'Approved':
+            print("session approved")
             self.session_manager.set_session(success['session_id'], datetime.utcnow())
+            self.refreshing = False
 
-        return msg
+        return msg == 'Approved'
 
     def __create_url(self, method, optional_args=None):
-
         # creating a new session
         if method == 'createsession':
             sig_and_timestamp = '{}/{}'.format(self.__generate_signature(method), util.time_stamp())
@@ -123,12 +133,40 @@ class BaseApi:
         base_path = '{}{}/{}/'.format(self.endpoint, method + 'Json', self.dev_id)
         return base_path + sig_and_timestamp
 
-    @retry(Exception, total_tries=3)
-    def _make_request(self, method, optional_args=None):
+    async def fetch(self, tasks):
+        if not self.session_manager.session_exists():
+            if not await self.create_session():
+                print("Could not create a session ")
+                return
 
+        # create Session Manager
+        await self.start_client_session()
+
+        requests = []
+
+        for task in tasks:
+            async with self.rate_limiter:
+                temp = asyncio.create_task(task)
+                requests.append(temp)
+                await asyncio.sleep(0)
+
+        stuff = await asyncio.gather(*requests)
+
+        await self.client_session.close()
+        return stuff
+
+    @retry(Exception, total_tries=3)
+    async def _make_request(self, method, optional_args=None):
         try:
             url = self.__create_url(method, optional_args)
-            response = self.session.get(url, timeout=5).json()
+
+            async with self.client_session.get(url) as resp:
+                try:
+                    response = await resp.json()
+                    print('after request {}'.format(url))
+                except:
+                    return
+
             msg = response[0]['ret_msg']
         except ValueError:
             return error_message("Invalid Input", optional_args)
@@ -139,10 +177,11 @@ class BaseApi:
             raise exceptions.ServerAndClientTimeMismatch("Error with client and server timestamps")
         if msg == 'Exception - Timestamp' or msg == 'Invalid session id.':
             print("Session is invalid, attempting to make a new one, one sec...")
-            if self.create_session() == 'Approved':
-                print("session was created successfully!!!")
-                return self._make_request(method, optional_args)
-            raise exceptions.InvalidSession("Failed to create session, server and client timestamps not matching")
+            await self.limiter.pause_tasks()
+            await self.create_session()
+            await self.limiter.resume_tasks()
+            return await self._make_request(method, optional_args)
+
         if msg == "dailylimit (7500 requests reached)/404":
             raise exceptions.RateLimitReached("You have reached the maximum number of requests")
 
@@ -155,10 +194,6 @@ class BaseApi:
     def get_server_status(self):
         server_status = self._make_request('gethirezserverstatus')
         return server_status
-
-    def check_data_used(self):
-        data_usage = self._make_request('getdataused')
-        return data_usage
 
     def get_leaderboard(self, queue, tier, season):
         leaderboard = self._make_request('getleagueleaderboard', '{}/{}/{}'.format(queue, tier, season))
