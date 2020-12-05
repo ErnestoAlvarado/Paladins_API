@@ -1,12 +1,11 @@
-import requests
 import hashlib
-from paladin_stats.paladin_wrapper import util, config, api_info, exceptions
-from paladin_stats.paladin_wrapper.rate_limiter import RateLimiter
+import util, config, api_info, exceptions
 from datetime import timedelta, datetime
 import time
 from functools import wraps
 import asyncio
 import aiohttp
+from aiolimiter import AsyncLimiter
 
 
 class SessionManager:
@@ -96,8 +95,8 @@ class BaseApi:
                                               api_info.SESSION_DURATION)
         self.endpoint = "http://api.paladins.com/paladinsapi.svc/"
         self.refreshing = False
-        self.limiter = RateLimiter(2, 1)
         self.client_session = None
+        self.rate_limiter = AsyncLimiter(1, 1)
 
     async def start_client_session(self):
         self.client_session = aiohttp.ClientSession()
@@ -107,7 +106,7 @@ class BaseApi:
             self.refreshing = True
 
         url = self.__create_url("createsession")
-
+        print("Going to make a new session")
         async with aiohttp.request('GET', url, json=True) as resp:
             success = await resp.json()
             print(success)
@@ -121,7 +120,6 @@ class BaseApi:
         return msg == 'Approved'
 
     def __create_url(self, method, optional_args=None):
-
         # creating a new session
         if method == 'createsession':
             sig_and_timestamp = '{}/{}'.format(self.__generate_signature(method), util.time_stamp())
@@ -136,36 +134,37 @@ class BaseApi:
         return base_path + sig_and_timestamp
 
     async def fetch(self, tasks):
-
         if not self.session_manager.session_exists():
-            if not self.refreshing:
-                print("Creating session...")
-                if not await self.create_session():
-                    print("session could not be created")
-                    return
+            if not await self.create_session():
+                print("Could not create a session ")
+                return
 
+        # create Session Manager
         await self.start_client_session()
 
-        stuff = []
-        start_time = time.time()
-        for task in tasks:
-            await self.limiter.get_token()
-            stuff.append(asyncio.create_task(task))
+        requests = []
 
-        stuff = await asyncio.gather(*stuff)
+        for task in tasks:
+            async with self.rate_limiter:
+                temp = asyncio.create_task(task)
+                requests.append(temp)
+                await asyncio.sleep(0)
+
+        stuff = await asyncio.gather(*requests)
+
         await self.client_session.close()
-        print("Time to finish all tasks: {}".format(time.time()-start_time))
         return stuff
 
     @retry(Exception, total_tries=3)
     async def _make_request(self, method, optional_args=None):
         try:
             url = self.__create_url(method, optional_args)
+
             async with self.client_session.get(url) as resp:
                 try:
                     response = await resp.json()
+                    print('after request {}'.format(url))
                 except:
-                    print("Error: {}".format(await response.text()))
                     return
 
             msg = response[0]['ret_msg']
@@ -178,8 +177,10 @@ class BaseApi:
             raise exceptions.ServerAndClientTimeMismatch("Error with client and server timestamps")
         if msg == 'Exception - Timestamp' or msg == 'Invalid session id.':
             print("Session is invalid, attempting to make a new one, one sec...")
+            await self.limiter.pause_tasks()
             await self.create_session()
-            return self._make_request(method, optional_args)
+            await self.limiter.resume_tasks()
+            return await self._make_request(method, optional_args)
 
         if msg == "dailylimit (7500 requests reached)/404":
             raise exceptions.RateLimitReached("You have reached the maximum number of requests")
@@ -212,3 +213,4 @@ class BaseApi:
     def __generate_signature(self, method):
         signature = hashlib.md5((self.dev_id + method + self.auth_key + util.time_stamp()).encode())
         return signature.hexdigest()
+
