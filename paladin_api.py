@@ -1,8 +1,7 @@
-from paladin_stats.paladin_wrapper.api_base import BaseApi
+from api_base import BaseApi
 from iteration_utilities import deepflatten
-import asyncio
-import aiohttp
 import time
+import asyncio
 
 
 class PaladinAPI(BaseApi):
@@ -101,10 +100,9 @@ class PaladinAPI(BaseApi):
 
     async def get_match_ids_by_hour(self, queue, date, hour, time_format=('00', '10', '20', '30', '40', '50')):
         """ Get all matches for any given hour. All matches are returned using 6 requests in an attempt
-            to avoid timing out the connection
+            to avoid timing out the connection 
         """
         tasks = []
-
         for interval in time_format:
             tasks.append((self.get_matchid_by_queue(queue, date, '{hr},{min}'.format(hr=hour, min=interval))))
 
@@ -126,7 +124,7 @@ class PaladinAPI(BaseApi):
         match_batch = 10
         i = 0
         num_matches = len(match_ids)
-
+        start = time.time()
         while i < num_matches:
             if i + match_batch > num_matches:
                 match_batch = num_matches - i
@@ -135,5 +133,6 @@ class PaladinAPI(BaseApi):
             tasks.append(self.get_matches_batch(matches))
             i += match_batch
 
-        match_data = await self.fetch(tasks)
+        match_data = await asyncio.create_task(self.fetch(tasks))
+        print('total time: {}'.format(time.time()-start))
         return list(deepflatten(match_data, ignore=dict))
