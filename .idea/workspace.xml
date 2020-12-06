@@ -2,13 +2,24 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="be716664-c8ae-44f8-9231-eef64f96c4a1" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Paladins_API.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Paladins_API.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/api_wrapper/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/champions/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/champions/champion_roles.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/gamemodes/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/players/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ranks/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_base.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/api_info.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/paladin_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/paladin_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_base.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_wrapper/api_base.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/api_info.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_wrapper/api_info.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/champion_roles.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_wrapper/exceptions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/game_mode.py" beforeDir="false" afterPath="$PROJECT_DIR$/gamemodes/match_queues.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/languages.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/league_tier.py" beforeDir="false" afterPath="$PROJECT_DIR$/ranks/league_tier.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/match.py" beforeDir="false" afterPath="$PROJECT_DIR$/players/match.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/paladin_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_wrapper/paladin_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/player.py" beforeDir="false" afterPath="$PROJECT_DIR$/players/player.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/api_wrapper/util.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,26 +29,32 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/api_base.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/api_wrapper/api_base.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-556">
-              <caret line="150" column="38" lean-forward="true" selection-start-line="150" selection-start-column="38" selection-end-line="150" selection-end-column="38" />
+            <state relative-caret-position="34">
+              <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/api_wrapper/paladin_api.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="153">
+              <caret line="9" column="25" lean-forward="true" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
               <folding>
-                <element signature="e#0#14#0" expanded="true" />
+                <element signature="e#0#40#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/paladin_api.py">
+        <entry file="file://$PROJECT_DIR$/api_wrapper/languages.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="379">
-              <caret line="136" column="55" selection-start-line="136" selection-start-column="55" selection-end-line="136" selection-end-column="55" />
-              <folding>
-                <element signature="e#0#58#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="153">
+              <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -74,14 +91,17 @@
         <option value="$PROJECT_DIR$/match.py" />
         <option value="$PROJECT_DIR$/paladin_api.py" />
         <option value="$PROJECT_DIR$/api_base.py" />
+        <option value="$PROJECT_DIR$/api_wrapper/api_base.py" />
+        <option value="$PROJECT_DIR$/player/match.py" />
+        <option value="$PROJECT_DIR$/players/match.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="45" />
-    <option name="y" value="13" />
-    <option name="width" value="1903" />
-    <option name="height" value="828" />
+    <option name="x" value="291" />
+    <option name="y" value="144" />
+    <option name="width" value="1386" />
+    <option name="height" value="744" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -109,12 +129,15 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\ernes\Documents\Projects\Paladins_API" />
-      <recent name="C:\Users\ernes\Documents\Projects\Paladins_API\paladin_wrapper" />
+      <recent name="C:\Users\ernes\Documents\Projects\Paladins_API\api_wrapper" />
+      <recent name="C:\Users\ernes\Documents\Projects\Paladins_API\ranks" />
+      <recent name="C:\Users\ernes\Documents\Projects\Paladins_API\gamemodes" />
+      <recent name="C:\Users\ernes\Documents\Projects\Paladins_API\champions" />
+      <recent name="C:\Users\ernes\Documents\Projects\Paladins_API\player" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Users\ernes\Documents\Projects\Paladins_API\paladin_wrapper" />
       <recent name="C:\Users\ernes\Documents\Projects\Paladins_API" />
+      <recent name="C:\Users\ernes\Documents\Projects\Paladins_API\paladin_wrapper" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -142,7 +165,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/paladin_api.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\ernes\Documents\Projects\Paladins_API\api_wrapper\paladin_api.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -210,7 +233,7 @@
       <window_info active="true" content_ui="combo" x="1" y="127" width="1846" height="923" id="Project" order="2" visible="true" weight="0.12469636" />
       <window_info anchor="bottom" id="Thumbnails" weight="0.3285968" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3285968" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32936078" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
@@ -265,61 +288,33 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/player.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
-          <caret line="13" column="23" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/match.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="527">
-          <caret line="32" selection-start-line="32" selection-end-line="32" />
-          <folding>
-            <element signature="e#0#30#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/champion_roles.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" selection-start-line="6" selection-end-line="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/exceptions.py">
+    <entry file="file://$PROJECT_DIR$/api_wrapper/exceptions.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="442">
           <caret line="26" selection-start-line="26" selection-end-line="26" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/game_mode.py">
+    <entry file="file://$PROJECT_DIR$/api_wrapper/api_base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="11" selection-start-column="11" selection-end-column="11" />
+        <state relative-caret-position="-2154">
+          <caret column="35" selection-start-column="35" selection-end-column="35" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/languages.py">
+    <entry file="file://$PROJECT_DIR$/api_wrapper/api_info.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
+        <state relative-caret-position="68">
+          <caret line="4" selection-start-line="4" selection-end-line="4" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/league_tier.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="20" column="11" selection-start-line="20" selection-start-column="11" selection-end-line="20" selection-end-column="11" />
-        </state>
-      </provider>
+    <entry file="file://$PROJECT_DIR$/players/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/util.py">
+    <entry file="file://$PROJECT_DIR$/api_wrapper/util.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="221">
+        <state relative-caret-position="238">
           <caret line="14" selection-start-line="14" selection-end-line="14" />
           <folding>
             <element signature="e#0#40#0" expanded="true" />
@@ -327,36 +322,64 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api_base.py">
+    <entry file="file://$PROJECT_DIR$/api_wrapper/api_base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2154">
-          <caret column="35" selection-start-column="35" selection-end-column="35" />
+        <state relative-caret-position="34">
+          <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api_info.py">
+    <entry file="file://$PROJECT_DIR$/players/player.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
+        <state relative-caret-position="221">
+          <caret line="13" column="23" selection-start-line="13" selection-start-column="23" selection-end-line="13" selection-end-column="23" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/paladin_api.py">
+    <entry file="file://$PROJECT_DIR$/players/match.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="379">
-          <caret line="136" column="55" selection-start-line="136" selection-start-column="55" selection-end-line="136" selection-end-column="55" />
+        <state relative-caret-position="51">
+          <caret line="3" lean-forward="true" selection-start-line="3" selection-end-line="3" />
           <folding>
-            <element signature="e#0#58#0" expanded="true" />
+            <element signature="e#0#30#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/api_base.py">
+    <entry file="file://$PROJECT_DIR$/gamemodes/match_queues.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-556">
-          <caret line="150" column="38" lean-forward="true" selection-start-line="150" selection-start-column="38" selection-end-line="150" selection-end-column="38" />
+        <state>
+          <caret column="11" selection-start-column="11" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ranks/league_tier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" lean-forward="true" selection-start-line="11" selection-end-line="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/champions/champion_roles.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api_wrapper/languages.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="12" selection-start-line="9" selection-start-column="12" selection-end-line="9" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/api_wrapper/paladin_api.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="25" lean-forward="true" selection-start-line="9" selection-start-column="25" selection-end-line="9" selection-end-column="25" />
           <folding>
-            <element signature="e#0#14#0" expanded="true" />
+            <element signature="e#0#40#0" expanded="true" />
           </folding>
         </state>
       </provider>
