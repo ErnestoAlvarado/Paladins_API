@@ -1,6 +1,6 @@
 
 class MatchPlayer:
-    """" Acts as an interface for player data pulled from a match
+    """" Acts as an interface for players data pulled from a match
     """
     def __init__(self, match_data):
         self.match_data = match_data

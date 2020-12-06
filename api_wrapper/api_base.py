@@ -1,5 +1,6 @@
 import hashlib
-import util, config, api_info, exceptions
+import config
+from api_wrapper import api_info, exceptions, util
 from datetime import timedelta, datetime
 import time
 from functools import wraps
@@ -163,7 +164,6 @@ class BaseApi:
             async with self.client_session.get(url) as resp:
                 try:
                     response = await resp.json()
-                    print('after request {}'.format(url))
                 except:
                     return
 

@@ -1,7 +1,6 @@
-from api_base import BaseApi
+from api_wrapper.api_base import BaseApi
 from iteration_utilities import deepflatten
 import time
-import asyncio
 
 
 class PaladinAPI(BaseApi):
@@ -50,7 +49,7 @@ class PaladinAPI(BaseApi):
             return "Not Found"
 
     def search_player(self, player):
-        """ The searchplayers function returns any players names that contain the 'player' parameter passed in """
+        """ The searchplayers function returns any players names that contain the 'players' parameter passed in """
 
         matching_players = self._make_request('searchplayers', player)
         print(matching_players)
@@ -133,6 +132,6 @@ class PaladinAPI(BaseApi):
             tasks.append(self.get_matches_batch(matches))
             i += match_batch
 
-        match_data = await asyncio.create_task(self.fetch(tasks))
+        match_data = await self.fetch(tasks)
         print('total time: {}'.format(time.time()-start))
         return list(deepflatten(match_data, ignore=dict))

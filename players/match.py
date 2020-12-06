@@ -1,5 +1,5 @@
-from player import MatchPlayer
-import champion_roles
+from players.player import MatchPlayer
+from champions import champion_roles
 
 
 class Match:
@@ -7,7 +7,7 @@ class Match:
 
     def __init__(self, match_data):
         # match data is a list of dictionaries where each dictionary corresponds to
-        # a player in that match
+        # a players in that match
         self.match_players = []
         self.champions_used = []
 
