@@ -146,16 +146,20 @@ class PaladinApi:
 
         requests = []
 
-        for task in tasks:
-            async with self.rate_limiter:
-                new_task = asyncio.create_task(task)
-                requests.append(new_task)
-                await asyncio.sleep(0)
+        try:
+            for task in tasks:
+                async with self.rate_limiter:
+                    new_task = asyncio.create_task(task)
+                    requests.append(new_task)
+                    await asyncio.sleep(0)
 
-        finished_requests = await asyncio.gather(*requests)
+            finished_requests = await asyncio.gather(*requests)
+        except:
+            finished_requests = []
+        finally:
+            await self.client_session.close()
+            self.client_session = None
 
-        await self.client_session.close()
-        self.client_session = None
         return finished_requests
 
     @staticmethod
@@ -174,6 +178,7 @@ class PaladinApi:
 
     @retry(Exception, total_tries=3)
     async def _make_request(self, method, optional_args=None):
+
         try:
             url = self.__create_url(method, optional_args)
 
@@ -333,7 +338,7 @@ class PaladinApi:
         ids = []
         try:
             ids = [match_id['Match'] for match_id in list(deepflatten(match_ids, ignore=dict))]
-        except KeyError:
+        except (KeyError, TypeError):
             print("Match Ids not found")
 
         return ids
@@ -355,4 +360,6 @@ class PaladinApi:
 
         match_data = await self.fetch(tasks)
         print('total time: {}'.format(time.time()-start))
-        return list(deepflatten(match_data, ignore=dict))
+        if match_data:
+            match_data = list(deepflatten(match_data, ignore=dict))
+        return match_data
