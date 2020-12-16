@@ -264,7 +264,7 @@ class PaladinApi:
         return player_info
 
     async def get_queue_stats(self, player_name, queue):
-        player_list = self.search_player(player_name)
+        player_list = await self.search_player(player_name)
 
         if len(player_list) == 1:
             print(player_list)
@@ -278,7 +278,7 @@ class PaladinApi:
         """ The searchplayers function returns any players names that contain the 'players' parameter passed in """
 
         matching_players = await self._make_request('searchplayers', player)
-        print(matching_players)
+
         if matching_players['ret_msg'] == "Not Found":
             return "Not Found"
 
