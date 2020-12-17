@@ -108,14 +108,12 @@ class PaladinApi:
             self.refreshing = True
 
         url = self.__create_url("createsession")
-        print("Going to make a new session")
 
-        success = await self.__simple_request(url)
+        success = await self.__send_request(url)
         print(success)
         msg = success['ret_msg']
 
         if msg == 'Approved':
-            print("session approved")
             self.session_manager.set_session(success['session_id'], datetime.utcnow())
             self.refreshing = False
 
@@ -162,10 +160,14 @@ class PaladinApi:
 
         return finished_requests
 
-    @staticmethod
-    async def __simple_request(url):
-        async with aiohttp.request('GET', url, json=True) as resp:
-            return await resp.json()
+    async def __send_request(self, url):
+        if self.client_session:
+            async with self.client_session.get(url) as resp:
+                response = await resp.json()
+        else:
+            async with aiohttp.request('GET', url, json=True) as resp:
+                response = await resp.json()
+        return response
 
     @staticmethod
     async def get_response_message(response):
@@ -177,17 +179,12 @@ class PaladinApi:
         return msg
 
     @retry(Exception, total_tries=3)
-    async def _make_request(self, method, optional_args=None):
+    async def __make_request(self, method, optional_args=None):
 
         try:
             url = self.__create_url(method, optional_args)
 
-            if self.client_session:
-                async with self.client_session.get(url) as resp:
-                    response = await resp.json()
-            else:
-                response = await self.__simple_request(url)
-
+            response = await self.__send_request(url)
             msg = await self.get_response_message(response)
 
         except ValueError:
@@ -200,7 +197,7 @@ class PaladinApi:
         if msg == 'Exception - Timestamp' or msg == 'Invalid session id.':
             print("Session is invalid, attempting to make a new one, one sec...")
             await self.create_session()
-            return await self._make_request(method, optional_args)
+            return await self.__make_request(method, optional_args)
 
         if msg == "dailylimit (7500 requests reached)/404":
             raise exceptions.RateLimitReached("You have reached the maximum number of requests")
@@ -208,23 +205,23 @@ class PaladinApi:
         return response
 
     async def test_session(self):
-        response = await self._make_request('testsession')
+        response = await self.__make_request('testsession')
         return response
 
     async def get_server_status(self):
-        server_status = await self._make_request('gethirezserverstatus')
+        server_status = await self.__make_request('gethirezserverstatus')
         return server_status
 
     async def get_leaderboard(self, queue, tier, season):
-        leaderboard = await self._make_request('getleagueleaderboard', '{}/{}/{}'.format(queue, tier, season))
+        leaderboard = await self.__make_request('getleagueleaderboard', '{}/{}/{}'.format(queue, tier, season))
         return leaderboard
 
     async def get_seasons(self, queue):
-        seasons = await self._make_request('getleagueseasons', queue)
+        seasons = await self.__make_request('getleagueseasons', queue)
         return seasons
 
     async def get_patch_info(self):
-        patch_info = await self._make_request('getpatchinfo')
+        patch_info = await self.__make_request('getpatchinfo')
         return patch_info
 
     def __generate_signature(self, method):
@@ -232,95 +229,97 @@ class PaladinApi:
         return signature.hexdigest()
 
     async def get_live_match_details(self, match_id):
-        live_match = await self._make_request('getmatchplayerdetails', match_id)
+        live_match = await self.__make_request('getmatchplayerdetails', match_id)
         return live_match
 
     async def get_match_details(self, match_id):
-        match_details = await self._make_request('getmatchdetails', match_id)
+        match_details = await self.__make_request('getmatchdetails', match_id)
         return match_details
 
     async def get_matches_batch(self, match_ids):
-        batch_details = await self._make_request('getmatchdetailsbatch', match_ids)
+        batch_details = await self.__make_request('getmatchdetailsbatch', match_ids)
         return batch_details
 
     async def get_matchid_by_queue(self, queue, date, hour):
-        match_ids = await self._make_request('getmatchidsbyqueue', '{}/{}/{}'.format(queue, date, hour))
+        match_ids = await self.__make_request('getmatchidsbyqueue', '{}/{}/{}'.format(queue, date, hour))
         return match_ids
 
     async def pro_matches_details(self):
-        esport_details = await self._make_request('getesportsproleaguedetails')
+        esport_details = await self.__make_request('getesportsproleaguedetails')
         return esport_details
 
     async def get_demo_details(self, match_id):
-        demo_details = await self._make_request('getdemodetails', match_id)
+        demo_details = await self.__make_request('getdemodetails', match_id)
         return demo_details
 
     async def get_player_status(self, player):
-        player_status = self._make_request('getplayerstatus', player)
+        player_status = self.__make_request('getplayerstatus', player)
         return await player_status
 
     async def get_player(self, player):
-        player_info = await self._make_request('getplayer', player)
+        player_info = await self.__make_request('getplayer', player)
         return player_info
 
     async def get_queue_stats(self, player_name, queue):
-        player_list = await self.search_player(player_name)
+        player = await self.search_player(player_name)
 
-        if len(player_list) == 1:
-            print(player_list)
-            player_id = player_list[0]['player_id']
-            queue_stats = await self._make_request('getqueuestats', '{}/{}'.format(player_id, queue))
+        try:
+            player_id = player['player_id']
+            queue_stats = await self.__make_request('getqueuestats', '{}/{}'.format(player_id, queue))
             return queue_stats
-        else:
-            return "Not Found"
+        except KeyError:
+            raise exceptions.NotFound
 
     async def search_player(self, player):
         """ The searchplayers function returns any players names that contain the 'players' parameter passed in """
 
-        matching_players = await self._make_request('searchplayers', player)
+        matching_players = await self.__make_request('searchplayers', player)
+        print(matching_players)
 
-        if matching_players['ret_msg'] == "Not Found":
-            return "Not Found"
+        if isinstance(matching_players, list):
+            for player_object in matching_players:
+                if player_object['Name'].lower() == player.lower():
+                    return player_object
+        else:
+            if matching_players['ret_msg'] == 'Not Found':
+                raise exceptions.NotFound
 
-        for player_name in matching_players:
-            if player_name['Name'].lower() == player.lower():
-                return [player_name]
         return matching_players
 
     async def get_player_loadouts(self, player, language='1'):
-        player_loadouts = await self._make_request('getplayerloadouts', '{}/{}'.format(player, language))
+        player_loadouts = await self.__make_request('getplayerloadouts', '{}/{}'.format(player, language))
         return player_loadouts
 
     async def get_player_details(self, player):
-        player_details = await self._make_request('getplayer', player)
+        player_details = await self.__make_request('getplayer', player)
         return player_details
 
     async def get_match_history(self, player):
-        match_history = await self._make_request('getmatchhistory', player)
+        match_history = await self.__make_request('getmatchhistory', player)
         return match_history
 
     async def get_champion_ranks(self, player_name):
-        champion_ranks = await self._make_request("getchampionranks", player_name)
+        champion_ranks = await self.__make_request("getchampionranks", player_name)
         return champion_ranks
 
     async def get_friends(self, player_name):
-        friends = await self._make_request('getfriends', player_name)
+        friends = await self.__make_request('getfriends', player_name)
         return friends
 
     async def get_all_champions(self, language='1'):
-        all_champions = await self._make_request('getchampions', language)
+        all_champions = await self.__make_request('getchampions', language)
         return all_champions
 
     async def get_champion_skins(self, champion_id, language='1'):
-        all_champion_skins = await self._make_request('getchampionskins', '{}/{}'.format(champion_id, language))
+        all_champion_skins = await self.__make_request('getchampionskins', '{}/{}'.format(champion_id, language))
         return all_champion_skins
 
     async def get_all_items(self, language='1'):
-        items = await self._make_request('getitems', language)
+        items = await self.__make_request('getitems', language)
         return items
 
     async def check_data_used(self):
-        data_usage = await self._make_request('getdataused')
+        data_usage = await self.__make_request('getdataused')
         return data_usage
 
     async def get_match_ids_by_hour(self, queue, date, hour, time_format=('00', '10', '20', '30', '40', '50')):
@@ -332,8 +331,6 @@ class PaladinApi:
             tasks.append((self.get_matchid_by_queue(queue, date, '{hr},{min}'.format(hr=hour, min=interval))))
 
         match_ids = await self.fetch(tasks)
-
-        print("Done with hour: {}".format(hour))
 
         ids = []
         try:
@@ -350,6 +347,7 @@ class PaladinApi:
         i = 0
         num_matches = len(match_ids)
         start = time.time()
+
         while i < num_matches:
             if i + match_batch > num_matches:
                 match_batch = num_matches - i

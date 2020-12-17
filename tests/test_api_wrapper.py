@@ -2,6 +2,7 @@ import pytest
 import asynctest
 from unittest.mock import MagicMock
 from api_wrapper.api import PaladinApi
+from api_wrapper import exceptions
 
 
 @pytest.fixture(scope='class')
@@ -40,3 +41,20 @@ class TestAPI(asynctest.TestCase):
         self.paly.fetch = asynctest.CoroutineMock(return_value={'ret_msg': 'not_found'})
         ids = await self.paly.get_match_ids_by_hour(486, 202020101, 10)
         self.assertEqual(ids, [])
+
+    async def test_search_player_multiple_players_returned(self):
+        self.paly._PaladinApi__make_request = asynctest.CoroutineMock(return_value=[{'ret_msg': 'found', 'Name': 'bob'},
+                                                                                  {'ret_msg': 'not found', 'Name': ''}])
+        player = await self.paly.search_player('bob')
+        self.assertEqual(player['Name'], 'bob')
+
+    async def test_search_player_not_found(self):
+        self.paly._PaladinApi__make_request = asynctest.CoroutineMock(return_value={'ret_msg': 'Not Found'})
+        player = self.paly.search_player('bob')
+        self.assertAsyncRaises(exceptions.NotFound, player)
+
+    async def test_get_queue_stats_too_many_players(self):
+        self.paly._PaladinApi__make_request = asynctest.CoroutineMock(return_value=[{'win': 10, 'games': 10},
+                                                                                    {'name': 'bob'}])
+        player = self.paly.get_queue_stats('bob', 420)
+        self.assertAsyncRaises(exceptions.NotFound, player)
