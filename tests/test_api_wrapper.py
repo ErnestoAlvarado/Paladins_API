@@ -97,3 +97,7 @@ class TestMatchPlayer(BaseTestClass):
         player = MatchPlayer({'Ban_1': 'bob', 'Ban_2': 'tom', 'Ban_3': 'other bob', 'Ban_4': ''})
         bans = player.get_bans()
         self.assertEqual(3, len(bans))
+
+    def test_get_timestamp(self):
+        tstamp = "12/10/2020 10:00:01 AM"
+        self.assertEquals(tstamp, self.player.get_time_stamp())

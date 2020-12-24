@@ -150,3 +150,6 @@ class MatchPlayer:
 
     def get_player_name(self):
         return self.match_data['playerName']
+
+    def get_time_stamp(self):
+        return self.match_data['Entry_Datetime']
