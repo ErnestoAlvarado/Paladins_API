@@ -1,6 +1,6 @@
 import hashlib
-from .. import config
-from . import api_info, exceptions, util
+import config
+from api_wrapper import api_info, exceptions, util
 from datetime import timedelta, datetime
 import time
 from functools import wraps
@@ -341,11 +341,7 @@ class PaladinApi:
         return ids
 
     async def get_matches(self, match_ids):
-        """ Get 10 matches at a time to avoid going over data.json limits using the get_matches_batch function
-            Args:
-                match_ids: type list
-        """
-
+        """ Get 10 matches at a time to avoid going over data limits using the get_matches_batch function"""
         tasks = []
         match_batch = 10
         i = 0
