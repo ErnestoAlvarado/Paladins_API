@@ -8,7 +8,7 @@
         "ActiveLevel2": 0,
         "ActiveLevel3": 0,
         "ActiveLevel4": 0,
-        "ActivePlayerId": "4491466",
+        "ActivePlayerId": "",
         "Assists": 10,
         "BanId1": 2420,
         "BanId2": 2288,
@@ -121,4 +121,4 @@
         "playerPortalId": "5",
         "playerPortalUserId": "76561199068255793",
         "ret_msg": null
-    }
+}

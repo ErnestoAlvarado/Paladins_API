@@ -1,6 +1,6 @@
 
 class MatchPlayer:
-    """" Acts as an interface for players data pulled from a match
+    """" Acts as an interface for players data.json pulled from a match
     """
     def __init__(self, match_data):
         self.match_data = match_data
@@ -15,7 +15,8 @@ class MatchPlayer:
         bans = []
 
         for i in range(1, 5):
-            bans.append(self.match_data['Ban_{}'.format(i)])
+            if self.match_data['Ban_{}'.format(i)]:
+                bans.append(self.match_data['Ban_{}'.format(i)])
 
         return bans
 
@@ -56,8 +57,9 @@ class MatchPlayer:
         loadout = []
 
         for i in range(1, 6):
-            (card, level) = self.match_data['Item_Purch_{}'.format(i)], self.match_data['ItemLevel{}'.format(i)]
-            loadout.append((card, level))
+            if self.match_data['Item_Purch_{}'.format(i)]:
+                (card, level) = self.match_data['Item_Purch_{}'.format(i)], self.match_data['ItemLevel{}'.format(i)]
+                loadout.append((card, level))
 
         return loadout
 
@@ -68,10 +70,9 @@ class MatchPlayer:
         items_bought = []
 
         for i in range(1, 5):
-            current_item = self.match_data['Item_Active_{}'.format(i)]
 
-            if current_item != '':
-                items_bought.append(current_item)
+            if self.match_data['Item_Active_{}'.format(i)]:
+                items_bought.append(self.match_data['Item_Active_{}'.format(i)])
 
         return items_bought
 
@@ -129,8 +130,14 @@ class MatchPlayer:
     def get_team(self):
         return self.match_data['TaskForce']
 
-    def get_points_in_match(self):
-        return self.match_data['Team{}Score'.format(self.match_data['TaskForce'])]
+    def get_team_score(self, team_id=None):
+        if not team_id:
+            team_id = self.match_data['TaskForce']
+
+        return self.match_data['Team{}Score'.format(team_id)]
+
+    def get_match_score(self):
+        return [(team_id, self.get_team_score(team_id)) for team_id in range(1, 3)]
 
     def get_win_status(self):
         return self.match_data['Win_Status']

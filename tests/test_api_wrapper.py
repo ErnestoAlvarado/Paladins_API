@@ -1,8 +1,10 @@
 import pytest
 import asynctest
-from unittest.mock import MagicMock
-from api_wrapper.api import PaladinApi
-from api_wrapper import exceptions
+import json
+from unittest.mock import MagicMock, patch
+from ..api_wrapper.api import PaladinApi
+from ..api_wrapper import exceptions
+from ..players.player import MatchPlayer
 
 
 @pytest.fixture(scope='class')
@@ -11,11 +13,19 @@ def api_object(request):
         pass
 
     request.cls.paly = PaladinApi()
+    with open('tests/data.json') as file:
+        temp_data = json.load(file)
+
+    request.cls.player = MatchPlayer(temp_data)
 
 
 @pytest.mark.asyncio
 @pytest.mark.usefixtures('api_object')
-class TestAPI(asynctest.TestCase):
+class BaseTestClass(asynctest.TestCase):
+    pass
+
+
+class TestAPI(BaseTestClass):
 
     async def test_make_request_non_list_response(self):
         simple_response = {'ret_msg': 'done'}
@@ -58,3 +68,32 @@ class TestAPI(asynctest.TestCase):
                                                                                     {'name': 'bob'}])
         player = self.paly.get_queue_stats('bob', 420)
         self.assertAsyncRaises(exceptions.NotFound, player)
+
+
+class TestMatchPlayer(BaseTestClass):
+    def test_get_match_scores(self):
+        self.assertEqual([(1, 4), (2, 0)], self.player.get_match_score())
+
+    def test_get_team_score(self):
+        self.assertEqual(4, self.player.get_team_score(1))
+
+    def test_get_loadout_returns_five_items(self):
+        self.assertEqual(5, len(self.player.get_loadout()))
+
+    def test_get_number_of_bans(self):
+        self.assertEqual(4, len(self.player.get_bans()))
+
+    def test_number_of_items(self):
+        self.assertEqual(2, len(self.player.get_items_purchased()))
+
+    def test_match_items_less_than_four(self):
+        player = MatchPlayer({'Item_Active_1': 'bob', 'Item_Active_2': 'tom', 'Item_Active_3': 'pam',
+                              'Item_Active_4': ''})
+
+        items_bought = player.get_items_purchased()
+        self.assertEqual(3, len(items_bought))
+
+    def test_missing_champion_bans(self):
+        player = MatchPlayer({'Ban_1': 'bob', 'Ban_2': 'tom', 'Ban_3': 'other bob', 'Ban_4': ''})
+        bans = player.get_bans()
+        self.assertEqual(3, len(bans))
