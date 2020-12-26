@@ -1,10 +1,9 @@
 import pytest
 import asynctest
 import json
-from unittest.mock import MagicMock, patch
 from ..api_wrapper.api import PaladinApi
 from ..api_wrapper import exceptions
-from ..players.player import MatchPlayer
+from api_wrapper.player import MatchPlayer
 
 
 @pytest.fixture(scope='class')

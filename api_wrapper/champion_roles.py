@@ -1,5 +1,3 @@
-
-
 CHAMPIONS = [('Bomb King', 'Damage'), ('Cassie', 'Damage'), ('Dredge', 'Damage'), ('Drogoz', 'Damage'), ('Imani', 'Damage'),
              ('Kinessa', 'Damage'), ('Lian', 'Damage'), ('Sha Lin', 'Damage'), ('Strix', 'Damage'), ('Tiberius', 'Damage'),
              ('Tyra', 'Damage'), ('Viktor', 'Damage'), ('Vivian', 'Damage'), ('Willo', 'Damage'), ('Ash', 'Front Line'),
