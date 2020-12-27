@@ -1,5 +1,5 @@
 import hashlib
-from .. import config
+import config
 from . import api_info, exceptions, util
 from datetime import timedelta, datetime
 import time
