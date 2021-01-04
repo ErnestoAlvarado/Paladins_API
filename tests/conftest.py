@@ -1,6 +1,6 @@
 import json
 import pytest
-from api_wrapper import api, player
+from paladins_api import api, player
 
 
 @pytest.fixture(scope='class')

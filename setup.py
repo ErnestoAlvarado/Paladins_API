@@ -12,7 +12,7 @@ setuptools.setup(
     long_description=long_description,
     long_description_content="text/markdown",
     url="https://github.com/ErnestoAlvarado/Paladins_API",
-    packages=setuptools.find_packages(include=['api_wrapper']),
+    packages=setuptools.find_packages(include=['paladins_api']),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Framework :: AsyncIO",

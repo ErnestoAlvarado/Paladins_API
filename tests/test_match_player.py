@@ -1,6 +1,6 @@
 import pytest
 import unittest
-from api_wrapper import player
+from paladins_api import player
 
 
 @pytest.mark.usefixtures('match_player_object')

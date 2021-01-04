@@ -1,7 +1,7 @@
 import asynctest
 import pytest
 import unittest
-from api_wrapper import api, exceptions
+from paladins_api import api, exceptions
 
 
 @pytest.mark.usefixtures('api_object')
